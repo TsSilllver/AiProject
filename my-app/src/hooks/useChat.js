@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 
-const API_URL = '/api.php'
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api.php`
+  : '/api.php'
 
 function buildSystemPrompt(config) {
   const { scenario, role, strictness } = config
