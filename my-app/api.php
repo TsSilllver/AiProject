@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // ⚠️ Authorization Key из Студии Сбера
-$authKey = 'MDFhMTQwNWQtY2NkMi03OTQ2LTlkYTctMzNhNDE5ZWQxNmFiOmUwZDQxZjhlLWQyM2EtNDM5Ny05ODFhLWQwMjVkYjc2OWRjMQ==';
+$authKey = getenv('GIGACHAT_AUTH_KEY');
 
 // ===== Шаг 1: Получаем Access Token =====
 
