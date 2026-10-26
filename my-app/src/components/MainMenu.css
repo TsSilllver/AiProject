@@ -26,6 +26,7 @@
   padding: 16px;
   border-bottom: 1px solid var(--border-subtle);
   min-height: 72px;
+  flex-shrink: 0; /* Запрещаем сжимать хедер */
 }
 
 .menu-header-expanded {
@@ -97,6 +98,7 @@
   text-align: left;
   font-weight: 500;
   box-sizing: border-box;
+  flex-shrink: 0; /* Кнопки не сжимаются */
 }
 
 .menu-btn-primary {
@@ -105,9 +107,7 @@
   color: var(--text-primary);
 }
 
-.menu-btn-primary:hover { 
-  background: var(--border-default); 
-}
+.menu-btn-primary:hover { background: var(--border-default); }
 
 .menu-btn-finish {
   background: rgba(239, 68, 68, 0.1);
@@ -128,10 +128,7 @@
   letter-spacing: 0.05em;
 }
 
-.menu-empty { 
-  font-size: 13px; 
-  color: var(--text-disabled); 
-}
+.menu-empty { font-size: 13px; color: var(--text-disabled); }
 
 .menu-history-item {
   display: flex;
@@ -142,19 +139,11 @@
   transition: 0.2s;
 }
 
-.menu-history-item:hover { 
-  background: var(--bg-tertiary); 
-}
+.menu-history-item:hover { background: var(--bg-tertiary); }
 
-.menu-history-item.pinned {
-  background: rgba(99, 102, 241, 0.05);
-}
+.menu-history-item.pinned { background: rgba(99, 102, 241, 0.05); }
 
-.history-info { 
-  flex: 1; 
-  cursor: pointer; 
-  overflow: hidden; 
-}
+.history-info { flex: 1; cursor: pointer; overflow: hidden; }
 
 .history-scenario {
   font-size: 14px;
@@ -165,10 +154,7 @@
   margin-bottom: 4px;
 }
 
-.history-date { 
-  font-size: 12px; 
-  color: var(--text-tertiary); 
-}
+.history-date { font-size: 12px; color: var(--text-tertiary); }
 
 .history-actions {
   display: flex;
@@ -192,18 +178,9 @@
   transition: 0.2s;
 }
 
-.history-pin {
-  font-size: 12px;
-  filter: grayscale(100%);
-}
-
-.history-pin.active {
-  filter: grayscale(0%);
-}
-
-.history-delete:hover { 
-  color: var(--error); 
-}
+.history-pin { font-size: 12px; filter: grayscale(100%); }
+.history-pin.active { filter: grayscale(0%); }
+.history-delete:hover { color: var(--error); }
 
 .history-divider {
   height: 1px;
@@ -212,33 +189,41 @@
   border: none;
 }
 
-/* Мобильная версия (как было изначально, но с фиксом рендера) */
+/* МОБИЛЬНАЯ ВЕРСИЯ (только для экранов < 768px) */
 @media (max-width: 768px) {
   .main-menu {
+    /* Меняем способ скрытия: вместо translateX используем прозрачность и видимость */
     width: 280px;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transform: none; 
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     border-right: none;
-  }
-
-  .main-menu.open {
-    transform: translateX(0);
-    box-shadow: 10px 0 50px rgba(0,0,0,0.8);
     z-index: 1000;
   }
 
-  /* Фикс: принудительно задаем высоту и скролл для контента */
-  .menu-drawer {
-    display: flex !important;
-    flex-direction: column !important;
-    height: calc(100vh - 72px) !important;
-    overflow-y: auto !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+  .main-menu.open {
+    opacity: 1;
+    visibility: visible;
+    box-shadow: 10px 0 50px rgba(0,0,0,0.8);
   }
-  
-  /* На мобилках кнопки действий истории всегда видимы, так как нет ховера */
+
+  /* Принудительно разрешаем скролл в списке истории */
+  .menu-drawer {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: calc(100vh - 72px); /* Вычитаем высоту хедера меню */
+    padding-bottom: 20px;
+  }
+
+  /* На телефоне нет наведения мыши, поэтому кнопки управления историей видны всегда */
   .history-actions {
     opacity: 1;
+  }
+  
+  /* Увеличиваем зону нажатия на мобилках */
+  .history-pin, .history-delete {
+    padding: 8px;
   }
 }
