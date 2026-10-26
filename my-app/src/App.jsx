@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import MainMenu from './components/MainMenu'
 import Setup from './pages/Setup'
 import Session from './pages/Session'
@@ -10,25 +10,42 @@ function App() {
   const [config, setConfig] = useState(null)
   const [sessionResult, setSessionResult] = useState(null)
   
+  const [currentTurns, setCurrentTurns] = useState(0)
   const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth > 768)
+
+  // Храним предыдущую ширину, чтобы понять, был ли переход с мобилки на ПК
+  const prevWidthRef = useRef(window.innerWidth)
 
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('argumentum_history')
     return saved ? JSON.parse(saved) : []
   })
 
-  // Следим за шириной экрана
   useEffect(() => {
     const handleResize = () => {
-      // Если перешли на ПК (шире 768px), принудительно открываем меню
-      if (window.innerWidth > 768) {
-        setIsMenuOpen(true)
+      const currentWidth = window.innerWidth
+      const prevWidth = prevWidthRef.current
+      
+      // Если мы были на мобилке (< 768) и перешли на ПК (> 768)
+      if (prevWidth <= 768 && currentWidth > 768) {
+        // Открываем меню ТОЛЬКО если мы НЕ в сессии
+        // Если мы в сессии, то меню должно оставаться свернутым (как ты и хотел)
+        if (screen !== 'session') {
+          setIsMenuOpen(true)
+        }
       }
+      
+      // Если ушли на мобилку, принудительно закрываем меню
+      if (prevWidth > 768 && currentWidth <= 768) {
+        setIsMenuOpen(false)
+      }
+
+      prevWidthRef.current = currentWidth
     }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [screen]) // Добавили зависимость от screen, чтобы эффект видел актуальный экран
 
   useEffect(() => {
     localStorage.setItem('argumentum_history', JSON.stringify(history))
@@ -36,9 +53,12 @@ function App() {
 
   const handleStart = (newConfig) => {
     setConfig(newConfig)
+    setCurrentTurns(0)
     setScreen('session')
-    // На ПК меню остается открытым, на мобилках закрывается
-    setIsMenuOpen(window.innerWidth > 768)
+    
+    // При старте сессии на ПК меню можно свернуть (чтобы было больше места),
+    // на мобилках оно и так скрыто
+    setIsMenuOpen(false) 
   }
 
   const handleFinish = (result) => {
@@ -54,12 +74,17 @@ function App() {
     setHistory(prev => [newHistoryItem, ...prev])
     setSessionResult(newHistoryItem)
     setScreen('report')
-    setIsMenuOpen(window.innerWidth > 768)
+    
+    // Когда завершаем сессию и переходим к отчету, на ПК можно развернуть меню обратно
+    if (window.innerWidth > 768) {
+      setIsMenuOpen(true)
+    }
   }
 
   const handleOpenHistory = (historyItem) => {
     setSessionResult(historyItem)
     setScreen('report')
+    setIsMenuOpen(false)
   }
 
   const handleDeleteHistory = (id) => {
@@ -76,8 +101,13 @@ function App() {
   const handleReset = () => {
     setConfig(null)
     setSessionResult(null)
+    setCurrentTurns(0)
     setScreen('setup')
-    setIsMenuOpen(window.innerWidth > 768)
+    
+    // При возврате на главную на ПК открываем меню
+    if (window.innerWidth > 768) {
+      setIsMenuOpen(true)
+    }
   }
 
   const isSessionActive = screen === 'session' && config
@@ -88,12 +118,10 @@ function App() {
 
   return (
     <div className="app-layout">
-      {/* Оверлей для закрытия меню на мобилках */}
       {isMenuOpen && (
         <div className="mobile-overlay" onClick={() => setIsMenuOpen(false)}></div>
       )}
 
-      {/* Объединенный хедер */}
       <div className="mobile-header">
         <button className="mobile-burger" onClick={() => setIsMenuOpen(true)}>
           ☰
@@ -104,11 +132,11 @@ function App() {
             <div className="mobile-progress-bar">
               <div 
                 className="mobile-progress-fill" 
-                style={{ width: `${Math.min((sessionResult?.turns || 0) / config.questionsCount * 100, 100)}%` }}
+                style={{ width: `${Math.min((currentTurns / config.questionsCount) * 100, 100)}%` }}
               />
             </div>
             <span className="mobile-progress-text">
-              {sessionResult?.turns || 0} / {config.questionsCount}
+              {currentTurns} / {config.questionsCount}
             </span>
           </div>
         ) : (
@@ -135,13 +163,16 @@ function App() {
       
       <div className={`app-content ${isMenuCollapsed ? 'menu-collapsed' : ''}`}>
         {screen === 'setup' && <Setup onStart={handleStart} />}
+        
         {screen === 'session' && config && (
           <Session 
+            key={config.scenario} // Добавили key, чтобы сессия пересоздавалась с нуля
             config={config} 
             onFinish={handleFinish} 
-            onProgressUpdate={(turns) => setSessionResult(prev => ({ ...prev, turns }))}
+            onProgressUpdate={(turns) => setCurrentTurns(turns)}
           />
         )}
+        
         {screen === 'report' && sessionResult && (
           <Report result={sessionResult} onRestart={handleReset} />
         )}

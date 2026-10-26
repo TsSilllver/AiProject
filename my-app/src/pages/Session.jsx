@@ -23,7 +23,6 @@ function Session({ config, onFinish, onProgressUpdate }) {
     }
   }, [messages])
 
-  // Обновляем прогресс наверху
   useEffect(() => {
     if (onProgressUpdate) onProgressUpdate(userTurns)
   }, [userTurns, onProgressUpdate])

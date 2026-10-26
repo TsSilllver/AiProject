@@ -5,6 +5,11 @@
   flex-direction: column;
   gap: 32px;
   margin-top: 40px;
+  position: relative;
+  z-index: 1000; /* Поднимаем выше мобильного меню */
+  background: var(--bg-primary); /* Чтобы фон был плотным */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .report-dialog {
@@ -39,4 +44,12 @@
 
 .report-msg-user .report-msg-author {
   color: var(--success);
+}
+
+@media (max-width: 768px) {
+  .report-container {
+    margin-top: 0;
+    padding: 16px;
+    width: 100vw;
+  }
 }
