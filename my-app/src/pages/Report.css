@@ -6,10 +6,74 @@
   gap: 32px;
   margin-top: 40px;
   position: relative;
-  z-index: 1000; /* Поднимаем выше мобильного меню */
-  background: var(--bg-primary); /* Чтобы фон был плотным */
+  z-index: 2000; /* Отчет всегда поверх всего */
+  background: var(--bg-primary); /* Плотный фон */
   padding: 20px;
   box-sizing: border-box;
+}
+
+.report-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--accent-muted);
+  color: var(--accent-hover);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.report-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.report-header p {
+  color: var(--text-secondary);
+}
+
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.report-stat {
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.report-stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.report-stat-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.report-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
 }
 
 .report-dialog {
@@ -46,10 +110,26 @@
   color: var(--success);
 }
 
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .report-container {
     margin-top: 0;
-    padding: 16px;
+    padding: 20px 16px;
     width: 100vw;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    z-index: 1; /* Убираем перекрытие меню */
+  }
+
+  .report-header h1 {
+    font-size: 24px;
+  }
+
+  .report-stats {
+    grid-template-columns: 1fr;
   }
 }

@@ -11,7 +11,7 @@ function App() {
   const [sessionResult, setSessionResult] = useState(null)
   
   const [currentTurns, setCurrentTurns] = useState(0)
-  const [currentMessages, setCurrentMessages] = useState([]) // Храним текущие сообщения для завершения из меню
+  const [currentMessages, setCurrentMessages] = useState([]) 
 
   const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth > 768)
   const prevWidthRef = useRef(window.innerWidth)
@@ -41,6 +41,13 @@ function App() {
     localStorage.setItem('argumentum_history', JSON.stringify(history))
   }, [history])
 
+  // Если перешли на экран отчета, принудительно закрываем меню на мобилках
+  useEffect(() => {
+    if (screen === 'report' && window.innerWidth <= 768) {
+      setIsMenuOpen(false)
+    }
+  }, [screen])
+
   const handleStart = (newConfig) => {
     setConfig(newConfig)
     setCurrentTurns(0)
@@ -49,7 +56,6 @@ function App() {
     setIsMenuOpen(false) 
   }
 
-  // ЕДИНАЯ ФУНКЦИЯ ЗАВЕРШЕНИЯ (вызывается и из чата, и из меню)
   const processFinish = (turns, messages) => {
     if (!config) return;
     
@@ -63,7 +69,6 @@ function App() {
     }
     
     setHistory(prev => {
-      // Проверка на дубликаты (чтобы не сохранить дважды)
       const exists = prev.find(item => item.id === newHistoryItem.id)
       if (exists) return prev
       return [newHistoryItem, ...prev]
@@ -140,21 +145,17 @@ function App() {
         onPinHistory={handlePinHistory}
         onNewSession={handleReset}
         isSessionActive={isSessionActive}
-        // ВАЖНО: Передаем функцию завершения с актуальными данными
         onFinishSession={() => processFinish(currentTurns, currentMessages)}
       />
       
       <div className={`app-content ${isMenuCollapsed ? 'menu-collapsed' : ''}`}>
         {screen === 'setup' && <Setup onStart={handleStart} />}
         
-        {screen === 'active' /* заглушка, используется 'session' */} 
         {screen === 'session' && config && (
           <Session 
             key={config.scenario}
             config={config} 
-            // Обычное завершение из чата
             onFinish={(result) => processFinish(result.turns, result.messages)} 
-            // Обновляем счетчик и сообщения для меню
             onProgressUpdate={(turns, msgs) => {
               setCurrentTurns(turns);
               if (msgs) setCurrentMessages(msgs);

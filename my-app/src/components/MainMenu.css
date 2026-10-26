@@ -26,7 +26,6 @@
   padding: 16px;
   border-bottom: 1px solid var(--border-subtle);
   min-height: 72px;
-  flex-shrink: 0; /* Запрещаем сжимать хедер */
 }
 
 .menu-header-expanded {
@@ -90,6 +89,7 @@
   gap: 16px;
 }
 
+/* ... стили кнопок и истории (оставь их без изменений, как было в прошлом коде) ... */
 .menu-btn-primary, .menu-btn-finish {
   width: 100%;
   padding: 12px;
@@ -98,7 +98,6 @@
   text-align: left;
   font-weight: 500;
   box-sizing: border-box;
-  flex-shrink: 0; /* Кнопки не сжимаются */
 }
 
 .menu-btn-primary {
@@ -107,17 +106,10 @@
   color: var(--text-primary);
 }
 
-.menu-btn-primary:hover { background: var(--border-default); }
-
 .menu-btn-finish {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid var(--error);
   color: var(--error);
-}
-
-.menu-btn-finish:hover {
-  background: var(--error);
-  color: white;
 }
 
 .menu-history-title {
@@ -125,7 +117,6 @@
   text-transform: uppercase;
   color: var(--text-tertiary);
   margin-bottom: 12px;
-  letter-spacing: 0.05em;
 }
 
 .menu-empty { font-size: 13px; color: var(--text-disabled); }
@@ -140,11 +131,9 @@
 }
 
 .menu-history-item:hover { background: var(--bg-tertiary); }
-
 .menu-history-item.pinned { background: rgba(99, 102, 241, 0.05); }
 
 .history-info { flex: 1; cursor: pointer; overflow: hidden; }
-
 .history-scenario {
   font-size: 14px;
   color: var(--text-primary);
@@ -153,7 +142,6 @@
   text-overflow: ellipsis;
   margin-bottom: 4px;
 }
-
 .history-date { font-size: 12px; color: var(--text-tertiary); }
 
 .history-actions {
@@ -163,7 +151,6 @@
   opacity: 0;
   transition: 0.2s;
 }
-
 .menu-history-item:hover .history-actions,
 .menu-history-item.pinned .history-actions {
   opacity: 1;
@@ -175,10 +162,7 @@
   color: var(--text-tertiary);
   cursor: pointer;
   padding: 4px;
-  transition: 0.2s;
 }
-
-.history-pin { font-size: 12px; filter: grayscale(100%); }
 .history-pin.active { filter: grayscale(0%); }
 .history-delete:hover { color: var(--error); }
 
@@ -186,44 +170,20 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--border-default), transparent);
   margin: 16px 0;
-  border: none;
 }
 
-/* МОБИЛЬНАЯ ВЕРСИЯ (только для экранов < 768px) */
+/* МОБИЛЬНАЯ ВЕРСИЯ */
 @media (max-width: 768px) {
   .main-menu {
-    /* Меняем способ скрытия: вместо translateX используем прозрачность и видимость */
     width: 280px;
-    transform: none; 
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
     border-right: none;
-    z-index: 1000;
+    z-index: 1000; /* Гарантированно поверх всего */
   }
 
   .main-menu.open {
-    opacity: 1;
-    visibility: visible;
+    transform: translateX(0);
     box-shadow: 10px 0 50px rgba(0,0,0,0.8);
-  }
-
-  /* Принудительно разрешаем скролл в списке истории */
-  .menu-drawer {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    height: calc(100vh - 72px); /* Вычитаем высоту хедера меню */
-    padding-bottom: 20px;
-  }
-
-  /* На телефоне нет наведения мыши, поэтому кнопки управления историей видны всегда */
-  .history-actions {
-    opacity: 1;
-  }
-  
-  /* Увеличиваем зону нажатия на мобилках */
-  .history-pin, .history-delete {
-    padding: 8px;
   }
 }
