@@ -82,10 +82,10 @@
 
 @media (max-width: 768px) {
   .session-layout {
-    height: 100dvh;
     flex-direction: column;
     width: 100vw;
-    padding-top: 60px; /* Отступ под мобильный хедер */
+    padding-top: 60px; /* Отступ под фиксированный мобильный хедер */
+    box-sizing: border-box;
   }
 
   .session-sidebar {
@@ -94,14 +94,12 @@
 
   .session-main {
     width: 100vw;
-    height: calc(100dvh - 60px);
-    border-radius: 0;
-    border: none;
+    flex: 1; /* Занимает все оставшееся место */
+    height: 100%;
     display: flex;
     flex-direction: column;
   }
 
-  /* Мобильный прогресс-бар */
   .mobile-only-progress {
     display: block;
     width: 100%;
@@ -109,6 +107,7 @@
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-subtle);
     box-sizing: border-box;
+    flex-shrink: 0; /* Не сжимается */
   }
 
   .session-messages {
@@ -128,9 +127,10 @@
     gap: 8px;
     box-sizing: border-box;
     width: 100vw;
+    flex-shrink: 0; /* Не сжимается */
   }
   
   .session-input .input {
-    font-size: 16px;
+    font-size: 16px; /* Чтобы iOS не делал зум */
   }
 }

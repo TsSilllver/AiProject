@@ -11,16 +11,47 @@ function Session({ config, onFinish }) {
   const [input, setInput] = useState('')
   const [userTurns, setUserTurns] = useState(0)
   const scrollRef = useRef(null)
+  const layoutRef = useRef(null)
 
   useEffect(() => {
     startSession()
   }, [])
 
+  // Автоскролл вниз при появлении новых сообщений
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [messages])
+
+  // ХИТРОСТЬ ДЛЯ МОБИЛОК: Отслеживаем клавиатуру
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.visualViewport && layoutRef.current) {
+        // Задаем высоту контейнера ровно по видимой части экрана
+        layoutRef.current.style.height = `${window.visualViewport.height}px`
+        
+        // Если клавиатура открылась, скроллим чат в самый низ
+        if (scrollRef.current) {
+          setTimeout(() => {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+          }, 100)
+        }
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+      window.visualViewport.addEventListener('scroll', handleResize)
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+        window.visualViewport.removeEventListener('scroll', handleResize)
+      }
+    }
+  }, [])
 
   const handleSend = async () => {
     const text = input.trim()
@@ -45,7 +76,7 @@ function Session({ config, onFinish }) {
   }
 
   return (
-    <div className="session-layout">
+    <div className="session-layout" ref={layoutRef}>
       <div className="session-sidebar">
         <div className="session-info">
           <div className="session-info-label">Ситуация</div>
@@ -62,7 +93,6 @@ function Session({ config, onFinish }) {
       </div>
 
       <div className="session-main">
-        {/* Мобильный прогресс-бар под хедером */}
         <div className="mobile-only-progress">
            <ProgressBar current={userTurns} total={config.questionsCount} label="Вопросы" />
         </div>
