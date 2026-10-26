@@ -227,10 +227,34 @@
     transition: transform 0.3s ease, width 0.3s ease;
   }
 
+  /* Раскрытое меню на мобилке */
   .main-menu.open {
-    width: 280px;
+    width: 100vw; /* На мобилке лучше делать на весь экран или 80% */
+    max-width: 320px;
     transform: translateX(0);
     box-shadow: 10px 0 50px rgba(0,0,0,0.8);
     z-index: 1000;
+    background: var(--bg-secondary); /* Явно задаем фон */
+  }
+
+  /* Фикс: принудительно разрешаем скролл и отображение контента */
+  .menu-drawer {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 16px !important;
+    overflow-y: auto !important;
+    height: calc(100vh - 72px) !important; /* Высота за вычетом хедера меню */
+  }
+
+  /* Увеличиваем зону нажатия для кнопок на телефоне */
+  .history-pin, .history-delete {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .menu-history-item {
+    padding: 14px 12px;
   }
 }
