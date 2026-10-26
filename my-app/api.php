@@ -1,5 +1,8 @@
 <?php
 // api.php — прокси для GigaChat
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -13,6 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // ⚠️ Authorization Key из Студии Сбера
 $authKey = getenv('GIGACHAT_AUTH_KEY');
+if (!$authKey) {
+    $authKey = 'MDFhMTQwNWQtY2NkMi03OTQ2LTlkYTctMzNhNDE5ZWQxNmFiOmUwZDQxZjhlLWQyM2EtNDM5Ny05ODFhLWQwMjVkYjc2OWRjMQ=='; 
+}
 
 // ===== Шаг 1: Получаем Access Token =====
 

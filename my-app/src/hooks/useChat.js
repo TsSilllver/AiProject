@@ -5,7 +5,14 @@ const API_URL = import.meta.env.VITE_API_URL
   : '/api.php'
 
 function buildSystemPrompt(config) {
-  const { scenario, role, strictness } = config
+  const { scenario, role, strictness, questionsCount } = config
+
+  const roleMap = {
+    interviewer: 'Ты — строгий HR-специалист или технический интервьюер. Твоя цель — проверить компетенции кандидата, задавая каверзные вопросы и требуя конкретных примеров.',
+    teacher: 'Ты — экзаменатор или научный руководитель. Твоя цель — проверить глубину знаний, логику и умение аргументировать. Ты можешь задавать уточняющие вопросы, если ответ поверхностный.',
+    opponent: 'Ты — оппонент в дебатах. Твоя цель — оспорить точку зрения пользователя, найти слабые места в аргументах и заставить защищаться.',
+    listener: 'Ты — человек, который ничего не понимает в теме. Твоя цель — задавать «глупые» вопросы и просить объяснить сложные термины простыми словами.'
+  }
 
   const strictnessMap = {
     learning: 'Давай развёрнутый разбор после каждого ответа пользователя. Будь доброжелателен.',
@@ -14,16 +21,17 @@ function buildSystemPrompt(config) {
     examination: 'Не давай обратной связи во время диалога. Только в конце.',
   }
 
-  return `Ты — тренажёр диалоговых ситуаций. Роль: ${role}. Ситуация: ${scenario}.
+  return `Ты — тренажёр диалоговых ситуаций. Роль: ${roleMap[role] || role}. Ситуация: ${scenario}.
 
-Режим: ${strictnessMap[strictness]}
+РЕЖИМ: ${strictnessMap[strictness]}
 
-Правила:
-- Всегда оставайся в роли. Если пользователь уходит от темы — возвращай его обратно.
-- Задавай по одному вопросу за раз.
-- Не давай готовых ответов на свои вопросы.
-- Если пользователь отвечает слабо — уточняй и копай глубже.
-- Отвечай на русском языке.`
+ВАЖНЫЕ ПРАВИЛА:
+1. В САМОМ ПЕРВОМ сообщении сразу задай первый вопрос по теме ситуации (не нужно здороваться или просить представиться).
+2. Всего в сессии должно быть РОВНО ${questionsCount} вопросов от тебя. Ты должен задать первый вопрос, второй, третий и т.д. до ${questionsCount}.
+3. Когда ты задаешь ${questionsCount}-й (последний) вопрос, ты ОБЯЗАН начать его со слов "Завершающий вопрос: " и задать сам вопрос. НИЧЕГО БОЛЬШЕ НЕ ПИШИ в этом сообщении.
+4. Когда пользователь ответит на этот ${questionsCount}-й вопрос, ты должен СНАЧАЛА дать краткий разбор его последнего ответа, а ЗАТЕМ в конце сообщения добавить фразу: "Спасибо за ответы. Нажмите кнопку 'Завершить и посмотреть отчёт' для получения результатов". И БОЛЬШЕ НИЧЕГО НЕ ПИШИ.
+5. Задавай по одному вопросу за раз. Не давай готовых ответов.
+6. Отвечай на русском языке.`
 }
 
 export function useChat(config) {
@@ -43,11 +51,8 @@ export function useChat(config) {
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'deepseek-chat',
             messages: [
               { role: 'system', content: buildSystemPrompt(config) },
               ...newMessages,
@@ -56,16 +61,13 @@ export function useChat(config) {
           }),
         })
 
-        if (!response.ok) {
-          throw new Error(`Ошибка API: ${response.status}`)
-        }
-
+        if (!response.ok) throw new Error(`Ошибка API: ${response.status}`)
         const data = await response.json()
+        
         const assistantMessage = {
           role: 'assistant',
           content: data.choices[0].message.content,
         }
-
         setMessages((prev) => [...prev, assistantMessage])
         return assistantMessage
       } catch (err) {
@@ -75,21 +77,17 @@ export function useChat(config) {
         setLoading(false)
       }
     },
-    [messages, config],
+    [messages, config]
   )
 
   const startSession = useCallback(async () => {
     setLoading(true)
     setError(null)
-
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'deepseek-chat',
           messages: [
             { role: 'system', content: buildSystemPrompt(config) },
             { role: 'user', content: 'Начни сессию с приветствия и первого вопроса.' },
@@ -98,19 +96,11 @@ export function useChat(config) {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error(`Ошибка API: ${response.status}`)
-      }
-
+      if (!response.ok) throw new Error(`Ошибка API: ${response.status}`)
       const data = await response.json()
-      const firstMessage = {
-        role: 'assistant',
-        content: data.choices[0].message.content,
-      }
-
-      setMessages([firstMessage])
+      setMessages([{ role: 'assistant', content: data.choices[0].message.content }])
     } catch (err) {
-        setError(err.message)
+      setError(err.message)
     } finally {
       setLoading(false)
     }

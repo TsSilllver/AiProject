@@ -1,0 +1,206 @@
+.main-menu {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+/* Широкое меню */
+.main-menu.open {
+  width: 260px;
+}
+
+/* Узкое меню (когда мы в сессии и оно свернуто) */
+.main-menu.closed {
+  width: 72px;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  min-height: 72px;
+}
+
+/* В широком виде: лого + текст + бургер в ряд */
+.menu-header-expanded {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.menu-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* В узком виде: лого сверху, бургер снизу */
+.menu-header-collapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.menu-logo {
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.menu-burger {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  transition: 0.2s;
+}
+
+.menu-burger:hover {
+  color: var(--text-primary);
+}
+
+/* В узком виде бургер тоже центрируем */
+.menu-header-collapsed .menu-burger {
+  margin: 0;
+}
+
+.menu-drawer {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ... (остальные стили кнопок и истории остаются прежними, как в прошлом ответе) ... */
+.menu-btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-weight: 500;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.menu-btn-primary:hover { background: var(--border-default); }
+
+.menu-history-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+
+.menu-empty { font-size: 13px; color: var(--text-disabled); }
+
+.menu-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  transition: 0.2s;
+}
+.menu-history-item:hover { background: var(--bg-tertiary); }
+.history-info { flex: 1; cursor: pointer; overflow: hidden; }
+.history-scenario {
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.history-date { font-size: 12px; color: var(--text-tertiary); }
+.history-delete {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.menu-history-item:hover .history-delete { opacity: 1; }
+.history-delete:hover { color: var(--error); }
+
+.menu-history-item.pinned {
+  background: rgba(99, 102, 241, 0.05); /* Легкий акцентный фон */
+}
+
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.menu-history-item:hover .history-actions {
+  opacity: 1;
+}
+
+/* Если чат закреплен, кнопки видны всегда */
+.menu-history-item.pinned .history-actions {
+  opacity: 1;
+}
+
+.history-pin {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 12px;
+  transition: 0.2s;
+  filter: grayscale(100%);
+}
+
+.history-pin:hover, .history-pin.active {
+  filter: grayscale(0%);
+}
+
+/* Дизайнерский разделитель */
+.history-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+  margin: 16px 0;
+  border: none;
+}

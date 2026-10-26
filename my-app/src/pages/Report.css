@@ -1,125 +1,42 @@
-.report {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 48px 24px 80px;
-}
-
 .report-container {
   width: 100%;
-  max-width: 720px;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  margin-top: 40px;
 }
 
-.report-header {
+.report-dialog {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.report-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  background: var(--accent-muted);
-  color: var(--accent-hover);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  align-self: flex-start;
-}
-
-.report-header h1 {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.report-header p {
-  color: var(--text-secondary);
-}
-
-.report-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-}
-
-.report-stat {
-  padding: 20px;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  padding: 24px;
   border-radius: var(--radius-lg);
-}
-
-.report-stat-value {
-  font-size: 28px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-
-.report-stat-label {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.report-section h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.report-answers {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.report-answer {
-  display: flex;
-  gap: 16px;
-  padding: 14px 18px;
-  background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
 }
 
-.report-answer-num {
-  font-family: var(--font-mono);
-  color: var(--text-tertiary);
-  font-size: 13px;
-  min-width: 20px;
+.report-msg {
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-.report-answer-text {
-  font-size: 14px;
-  line-height: 1.5;
+.report-msg-assistant {
   color: var(--text-primary);
 }
 
-.report-actions {
-  display: flex;
-  justify-content: flex-end;
+.report-msg-user {
+  color: var(--text-secondary);
+  text-align: right;
 }
 
-@media (max-width: 640px) {
-  .report {
-    padding: 24px 16px 60px;
-  }
+.report-msg-author {
+  font-weight: 600;
+  margin-right: 8px;
+  color: var(--accent);
+}
 
-  .report-header h1 {
-    font-size: 24px;
-  }
-
-  .report-stats {
-    grid-template-columns: 1fr;
-  }
+.report-msg-user .report-msg-author {
+  color: var(--success);
 }

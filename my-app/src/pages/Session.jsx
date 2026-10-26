@@ -31,16 +31,6 @@ function Session({ config, onFinish }) {
     setUserTurns(newTurns)
 
     await sendMessage(text)
-
-    if (newTurns >= config.turns) {
-      setTimeout(() => {
-        onFinish({
-          config,
-          messages,
-          turns: newTurns,
-        })
-      }, 800)
-    }
   }
 
   const handleKeyDown = (e) => {
@@ -50,8 +40,13 @@ function Session({ config, onFinish }) {
     }
   }
 
+  // Теперь мы просто передаем историю и ждем, пока пользователь сам нажмет кнопку
+  const handleFinish = () => {
+    onFinish({ config, messages, turns: userTurns })
+  }
+
   return (
-    <div className="session">
+    <div className="session-layout">
       <div className="session-sidebar">
         <div className="session-info">
           <div className="session-info-label">Ситуация</div>
@@ -59,18 +54,18 @@ function Session({ config, onFinish }) {
         </div>
 
         <div className="session-info">
-          <div className="session-info-label">Режим</div>
-          <div className="session-info-value">{config.strictness}</div>
+          <div className="session-info-label">Роль ИИ</div>
+          <div className="session-info-value">{config.role}</div>
         </div>
 
         <ProgressBar
           current={userTurns}
-          total={config.turns}
+          total={config.questionsCount}
           label="Прогресс"
         />
 
-        <Button variant="secondary" onClick={() => onFinish({ config, messages, turns: userTurns })}>
-          Завершить сессию
+        <Button variant="secondary" onClick={handleFinish}>
+          Завершить и посмотреть отчёт
         </Button>
       </div>
 
@@ -82,17 +77,11 @@ function Session({ config, onFinish }) {
 
           {loading && (
             <div className="session-loading">
-              <span />
-              <span />
-              <span />
+              <span /><span /><span />
             </div>
           )}
 
-          {error && (
-            <div className="session-error">
-              Ошибка: {error}. Проверьте ключ API в файле .env
-            </div>
-          )}
+          {error && <div className="session-error">Ошибка: {error}</div>}
         </div>
 
         <div className="session-input">
@@ -101,7 +90,8 @@ function Session({ config, onFinish }) {
             rows={2}
             value={input}
             onChange={setInput}
-            placeholder="Ваш ответ... (Enter — отправить, Shift+Enter — новая строка)"
+            placeholder="Ваш ответ..."
+            onKeyDown={handleKeyDown}
           />
           <Button onClick={handleSend} disabled={!input.trim() || loading}>
             Отправить

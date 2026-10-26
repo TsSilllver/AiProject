@@ -1,5 +1,29 @@
-.app {
-  height: 100%;
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.app-content {
+  flex: 1;
+  padding: 40px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  transition: margin-left 0.3s ease;
+  margin-left: 260px; /* Отступ под широкое меню по умолчанию */
+}
+
+/* Когда меню свернуто (в сессии), контент сдвигается влево */
+.app-content.menu-collapsed {
+  margin-left: 72px;
+  padding: 0;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    margin-left: 72px !important; /* На мобилках всегда узкое */
+    padding: 80px 20px 40px;
+  }
 }
