@@ -78,11 +78,6 @@
   font-size: 24px;
   cursor: pointer;
   padding: 4px;
-  transition: 0.2s;
-}
-
-.menu-burger:hover {
-  color: var(--text-primary);
 }
 
 .menu-drawer {
@@ -101,8 +96,6 @@
   cursor: pointer;
   text-align: left;
   font-weight: 500;
-  transition: 0.2s;
-  white-space: nowrap;
   box-sizing: border-box;
 }
 
@@ -219,42 +212,33 @@
   border: none;
 }
 
+/* Мобильная версия (как было изначально, но с фиксом рендера) */
 @media (max-width: 768px) {
   .main-menu {
-    width: 0;
-    border-right: none;
+    width: 280px;
     transform: translateX(-100%);
-    transition: transform 0.3s ease, width 0.3s ease;
+    transition: transform 0.3s ease;
+    border-right: none;
   }
 
-  /* Раскрытое меню на мобилке */
   .main-menu.open {
-    width: 100vw; /* На мобилке лучше делать на весь экран или 80% */
-    max-width: 320px;
     transform: translateX(0);
     box-shadow: 10px 0 50px rgba(0,0,0,0.8);
     z-index: 1000;
-    background: var(--bg-secondary); /* Явно задаем фон */
   }
 
-  /* Фикс: принудительно разрешаем скролл и отображение контента */
+  /* Фикс: принудительно задаем высоту и скролл для контента */
   .menu-drawer {
     display: flex !important;
     flex-direction: column !important;
+    height: calc(100vh - 72px) !important;
+    overflow-y: auto !important;
     visibility: visible !important;
     opacity: 1 !important;
-    padding: 16px !important;
-    overflow-y: auto !important;
-    height: calc(100vh - 72px) !important; /* Высота за вычетом хедера меню */
-  }
-
-  /* Увеличиваем зону нажатия для кнопок на телефоне */
-  .history-pin, .history-delete {
-    padding: 10px;
-    font-size: 16px;
   }
   
-  .menu-history-item {
-    padding: 14px 12px;
+  /* На мобилках кнопки действий истории всегда видимы, так как нет ховера */
+  .history-actions {
+    opacity: 1;
   }
 }

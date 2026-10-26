@@ -1,11 +1,12 @@
+import { useState, useEffect } from 'react'
 import './MainMenu.css'
 
 function MainMenu({ 
   isOpen, 
   isCollapsed, 
   toggleMenu, 
-  pinnedHistory, 
-  regularHistory, 
+  pinnedHistory: propsPinned, 
+  regularHistory: propsRegular, 
   onOpenHistory, 
   onDeleteHistory, 
   onPinHistory, 
@@ -13,7 +14,26 @@ function MainMenu({
   isSessionActive,
   onFinishSession
 }) {
-  
+  // Локальный стейт для страховки на мобилках
+  const [localHistory, setLocalHistory] = useState([])
+
+  useEffect(() => {
+    // Если меню открывается, подстраховываемся и читаем из localStorage
+    if (isOpen) {
+      const saved = localStorage.getItem('argumentum_history')
+      if (saved) {
+        setLocalHistory(JSON.parse(saved))
+      }
+    }
+  }, [isOpen])
+
+  // Если из App.jsx пришла пустая история (глюк мобилки), берем локальную
+  const hasPropsHistory = propsPinned.length > 0 || propsRegular.length > 0
+  const allHistory = hasPropsHistory ? [...propsPinned, ...propsRegular] : localHistory
+
+  const pinned = allHistory.filter(item => item.isPinned)
+  const regular = allHistory.filter(item => !item.isPinned)
+
   const renderHistoryItem = (item) => (
     <div key={item.id} className={`menu-history-item ${item.isPinned ? 'pinned' : ''}`}>
       <div className="history-info" onClick={() => onOpenHistory(item)}>
@@ -65,7 +85,6 @@ function MainMenu({
             + Новая сессия
           </button>
           
-          {/* Кнопка завершения сессии внутри меню */}
           {isSessionActive && (
             <button className="menu-btn-finish" onClick={onFinishSession}>
               ■ Завершить сессию
@@ -73,27 +92,27 @@ function MainMenu({
           )}
 
           <div className="menu-history">
-            {pinnedHistory.length === 0 && regularHistory.length === 0 && (
+            {pinned.length === 0 && regular.length === 0 && (
               <div className="menu-empty">Пока пусто</div>
             )}
 
-            {pinnedHistory.length > 0 && (
+            {pinned.length > 0 && (
               <>
                 <div className="menu-history-title">Закреплённые</div>
-                {pinnedHistory.map(renderHistoryItem)}
+                {pinned.map(renderHistoryItem)}
               </>
             )}
 
-            {pinnedHistory.length > 0 && regularHistory.length > 0 && (
+            {pinned.length > 0 && regular.length > 0 && (
               <div className="history-divider" />
             )}
 
-            {regularHistory.length > 0 && (
+            {regular.length > 0 && (
               <>
-                <div className="menu-history-title" style={{ marginTop: pinnedHistory.length > 0 ? '16px' : '0' }}>
+                <div className="menu-history-title" style={{ marginTop: pinned.length > 0 ? '16px' : '0' }}>
                   История
                 </div>
-                {regularHistory.map(renderHistoryItem)}
+                {regular.map(renderHistoryItem)}
               </>
             )}
           </div>
