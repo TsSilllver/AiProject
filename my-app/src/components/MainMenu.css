@@ -91,25 +91,40 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
-.menu-btn-primary {
+.menu-btn-primary, .menu-btn-finish {
   width: 100%;
   padding: 12px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-default);
-  color: var(--text-primary);
   border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
   font-weight: 500;
   transition: 0.2s;
   white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.menu-btn-primary {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
 }
 
 .menu-btn-primary:hover { 
   background: var(--border-default); 
+}
+
+.menu-btn-finish {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+.menu-btn-finish:hover {
+  background: var(--error);
+  color: white;
 }
 
 .menu-history-title {

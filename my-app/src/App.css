@@ -11,23 +11,33 @@
   flex-direction: column;
   align-items: center;
   transition: margin-left 0.3s ease;
-  margin-left: 260px; /* Отступ под широкое меню */
+  margin-left: 260px;
 }
 
-/* Когда меню свернуто (в сессии), контент сдвигается влево */
 .app-content.menu-collapsed {
   margin-left: 72px;
   padding: 0;
   align-items: stretch;
 }
 
-/* По умолчанию мобильный хедер скрыт */
 .mobile-header {
   display: none;
 }
 
+.mobile-overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  /* Мобильный хедер */
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 950;
+    backdrop-filter: blur(2px);
+  }
+
   .mobile-header {
     display: flex;
     align-items: center;
@@ -51,8 +61,6 @@
     font-size: 24px;
     cursor: pointer;
     padding: 0;
-    display: flex;
-    align-items: center;
   }
 
   .mobile-brand {
@@ -81,7 +89,33 @@
     color: var(--text-primary);
   }
 
-  /* Сдвигаем контент вниз, чтобы он не залезал под шапку */
+  .mobile-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .mobile-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .mobile-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .mobile-progress-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+
   .app-content {
     margin-left: 0 !important; 
     padding: 76px 16px 20px 16px !important; 
@@ -89,8 +123,7 @@
     box-sizing: border-box;
   }
 
-  /* В режиме сессии убираем отступы, так как там свой layout */
   .app-content.menu-collapsed {
-    padding: 0 !important;
+    padding: 60px 0 0 0 !important;
   }
 }

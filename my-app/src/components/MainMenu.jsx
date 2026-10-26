@@ -9,15 +9,15 @@ function MainMenu({
   onOpenHistory, 
   onDeleteHistory, 
   onPinHistory, 
-  onNewSession 
+  onNewSession,
+  isSessionActive,
+  onFinishSession
 }) {
   
   const renderHistoryItem = (item) => (
     <div key={item.id} className={`menu-history-item ${item.isPinned ? 'pinned' : ''}`}>
       <div className="history-info" onClick={() => onOpenHistory(item)}>
-        <div className="history-scenario">
-          {item.config.scenario}
-        </div>
+        <div className="history-scenario">{item.config.scenario}</div>
         <div className="history-date">{item.date}</div>
       </div>
       
@@ -65,6 +65,13 @@ function MainMenu({
             + Новая сессия
           </button>
           
+          {/* Кнопка завершения сессии внутри меню */}
+          {isSessionActive && (
+            <button className="menu-btn-finish" onClick={onFinishSession}>
+              ■ Завершить сессию
+            </button>
+          )}
+
           <div className="menu-history">
             {pinnedHistory.length === 0 && regularHistory.length === 0 && (
               <div className="menu-empty">Пока пусто</div>

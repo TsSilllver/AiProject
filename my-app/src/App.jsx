@@ -10,15 +10,25 @@ function App() {
   const [config, setConfig] = useState(null)
   const [sessionResult, setSessionResult] = useState(null)
   
-  // Инициализируем меню: на ПК открыто, на мобилках закрыто
-  const [isMenuOpen, setIsMenuOpen] = useState(() => {
-    return window.innerWidth > 768
-  })
+  const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth > 768)
 
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('argumentum_history')
     return saved ? JSON.parse(saved) : []
   })
+
+  // Следим за шириной экрана
+  useEffect(() => {
+    const handleResize = () => {
+      // Если перешли на ПК (шире 768px), принудительно открываем меню
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(true)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('argumentum_history', JSON.stringify(history))
@@ -27,7 +37,8 @@ function App() {
   const handleStart = (newConfig) => {
     setConfig(newConfig)
     setScreen('session')
-    setIsMenuOpen(false)
+    // На ПК меню остается открытым, на мобилках закрывается
+    setIsMenuOpen(window.innerWidth > 768)
   }
 
   const handleFinish = (result) => {
@@ -69,22 +80,43 @@ function App() {
     setIsMenuOpen(window.innerWidth > 768)
   }
 
-  const isMenuCollapsed = screen === 'session' && !isMenuOpen
+  const isSessionActive = screen === 'session' && config
+  const isMenuCollapsed = isSessionActive && !isMenuOpen
 
   const pinnedHistory = history.filter(item => item.isPinned)
   const regularHistory = history.filter(item => !item.isPinned)
 
   return (
     <div className="app-layout">
-      {/* Мобильный хедер (виден только на узких экранах) */}
+      {/* Оверлей для закрытия меню на мобилках */}
+      {isMenuOpen && (
+        <div className="mobile-overlay" onClick={() => setIsMenuOpen(false)}></div>
+      )}
+
+      {/* Объединенный хедер */}
       <div className="mobile-header">
         <button className="mobile-burger" onClick={() => setIsMenuOpen(true)}>
           ☰
         </button>
-        <div className="mobile-brand" onClick={handleReset}>
-          <div className="mobile-logo">A</div>
-          <span>Argumentum</span>
-        </div>
+        
+        {isSessionActive ? (
+          <div className="mobile-progress-container">
+            <div className="mobile-progress-bar">
+              <div 
+                className="mobile-progress-fill" 
+                style={{ width: `${Math.min((sessionResult?.turns || 0) / config.questionsCount * 100, 100)}%` }}
+              />
+            </div>
+            <span className="mobile-progress-text">
+              {sessionResult?.turns || 0} / {config.questionsCount}
+            </span>
+          </div>
+        ) : (
+          <div className="mobile-brand" onClick={handleReset}>
+            <div className="mobile-logo">A</div>
+            <span>Argumentum</span>
+          </div>
+        )}
       </div>
 
       <MainMenu 
@@ -97,12 +129,18 @@ function App() {
         onDeleteHistory={handleDeleteHistory}
         onPinHistory={handlePinHistory}
         onNewSession={handleReset}
+        isSessionActive={isSessionActive}
+        onFinishSession={handleReset}
       />
       
       <div className={`app-content ${isMenuCollapsed ? 'menu-collapsed' : ''}`}>
         {screen === 'setup' && <Setup onStart={handleStart} />}
         {screen === 'session' && config && (
-          <Session config={config} onFinish={handleFinish} />
+          <Session 
+            config={config} 
+            onFinish={handleFinish} 
+            onProgressUpdate={(turns) => setSessionResult(prev => ({ ...prev, turns }))}
+          />
         )}
         {screen === 'report' && sessionResult && (
           <Report result={sessionResult} onRestart={handleReset} />

@@ -23,10 +23,6 @@
   overflow: hidden;
 }
 
-.mobile-only-progress {
-  display: none;
-}
-
 .session-messages {
   flex: 1;
   overflow-y: auto;
@@ -84,7 +80,7 @@
   .session-layout {
     flex-direction: column;
     width: 100vw;
-    padding-top: 60px; /* Отступ под фиксированный мобильный хедер */
+    padding-top: 60px; /* Место под объединенный хедер */
     box-sizing: border-box;
   }
 
@@ -94,20 +90,10 @@
 
   .session-main {
     width: 100vw;
-    flex: 1; /* Занимает все оставшееся место */
+    flex: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .mobile-only-progress {
-    display: block;
-    width: 100%;
-    padding: 12px 20px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-subtle);
-    box-sizing: border-box;
-    flex-shrink: 0; /* Не сжимается */
   }
 
   .session-messages {
@@ -127,10 +113,10 @@
     gap: 8px;
     box-sizing: border-box;
     width: 100vw;
-    flex-shrink: 0; /* Не сжимается */
+    flex-shrink: 0;
   }
   
   .session-input .input {
-    font-size: 16px; /* Чтобы iOS не делал зум */
+    font-size: 16px;
   }
 }

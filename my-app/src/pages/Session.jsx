@@ -6,7 +6,7 @@ import ProgressBar from '../components/ProgressBar'
 import { useChat } from '../hooks/useChat'
 import './Session.css'
 
-function Session({ config, onFinish }) {
+function Session({ config, onFinish, onProgressUpdate }) {
   const { messages, loading, error, sendMessage, startSession } = useChat(config)
   const [input, setInput] = useState('')
   const [userTurns, setUserTurns] = useState(0)
@@ -17,34 +17,31 @@ function Session({ config, onFinish }) {
     startSession()
   }, [])
 
-  // Автоскролл вниз при появлении новых сообщений
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [messages])
 
-  // ХИТРОСТЬ ДЛЯ МОБИЛОК: Отслеживаем клавиатуру
+  // Обновляем прогресс наверху
+  useEffect(() => {
+    if (onProgressUpdate) onProgressUpdate(userTurns)
+  }, [userTurns, onProgressUpdate])
+
+  // Фикс клавиатуры на iOS
   useEffect(() => {
     const handleResize = () => {
       if (window.visualViewport && layoutRef.current) {
-        // Задаем высоту контейнера ровно по видимой части экрана
         layoutRef.current.style.height = `${window.visualViewport.height}px`
-        
-        // Если клавиатура открылась, скроллим чат в самый низ
         if (scrollRef.current) {
-          setTimeout(() => {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-          }, 100)
+          setTimeout(() => { scrollRef.current.scrollTop = scrollRef.current.scrollHeight }, 100)
         }
       }
     }
-
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleResize)
       window.visualViewport.addEventListener('scroll', handleResize)
     }
-
     return () => {
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', handleResize)
@@ -60,7 +57,6 @@ function Session({ config, onFinish }) {
     setInput('')
     const newTurns = userTurns + 1
     setUserTurns(newTurns)
-
     await sendMessage(text)
   }
 
@@ -93,21 +89,15 @@ function Session({ config, onFinish }) {
       </div>
 
       <div className="session-main">
-        <div className="mobile-only-progress">
-           <ProgressBar current={userTurns} total={config.questionsCount} label="Вопросы" />
-        </div>
-
         <div className="session-messages" ref={scrollRef}>
           {messages.map((msg, i) => (
             <Message key={i} role={msg.role} content={msg.content} />
           ))}
-
           {loading && (
             <div className="session-loading">
               <span /><span /><span />
             </div>
           )}
-
           {error && <div className="session-error">Ошибка: {error}</div>}
         </div>
 
