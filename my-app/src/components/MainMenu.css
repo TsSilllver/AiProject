@@ -8,16 +8,14 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, transform 0.3s ease;
   overflow: hidden;
 }
 
-/* Широкое меню */
 .main-menu.open {
   width: 260px;
 }
 
-/* Узкое меню (когда мы в сессии и оно свернуто) */
 .main-menu.closed {
   width: 72px;
 }
@@ -30,7 +28,6 @@
   min-height: 72px;
 }
 
-/* В широком виде: лого + текст + бургер в ряд */
 .menu-header-expanded {
   display: flex;
   align-items: center;
@@ -52,7 +49,6 @@
   white-space: nowrap;
 }
 
-/* В узком виде: лого сверху, бургер снизу */
 .menu-header-collapsed {
   display: flex;
   flex-direction: column;
@@ -87,11 +83,6 @@
 
 .menu-burger:hover {
   color: var(--text-primary);
-}
-
-/* В узком виде бургер тоже центрируем */
-.menu-header-collapsed .menu-burger {
-  margin: 0;
 }
 
 .menu-drawer {
@@ -138,6 +129,8 @@
   transition: 0.2s;
 }
 .menu-history-item:hover { background: var(--bg-tertiary); }
+.menu-history-item.pinned { background: rgba(99, 102, 241, 0.05); }
+
 .history-info { flex: 1; cursor: pointer; overflow: hidden; }
 .history-scenario {
   font-size: 14px;
@@ -148,21 +141,6 @@
   margin-bottom: 4px;
 }
 .history-date { font-size: 12px; color: var(--text-tertiary); }
-.history-delete {
-  background: none;
-  border: none;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  padding: 4px;
-  opacity: 0;
-  transition: 0.2s;
-}
-.menu-history-item:hover .history-delete { opacity: 1; }
-.history-delete:hover { color: var(--error); }
-
-.menu-history-item.pinned {
-  background: rgba(99, 102, 241, 0.05); /* Легкий акцентный фон */
-}
 
 .history-actions {
   display: flex;
@@ -172,16 +150,10 @@
   transition: 0.2s;
 }
 
-.menu-history-item:hover .history-actions {
-  opacity: 1;
-}
+.menu-history-item:hover .history-actions { opacity: 1; }
+.menu-history-item.pinned .history-actions { opacity: 1; }
 
-/* Если чат закреплен, кнопки видны всегда */
-.menu-history-item.pinned .history-actions {
-  opacity: 1;
-}
-
-.history-pin {
+.history-pin, .history-delete {
   background: none;
   border: none;
   color: var(--text-tertiary);
@@ -189,14 +161,12 @@
   padding: 4px;
   font-size: 12px;
   transition: 0.2s;
-  filter: grayscale(100%);
 }
 
-.history-pin:hover, .history-pin.active {
-  filter: grayscale(0%);
-}
+.history-pin { filter: grayscale(100%); }
+.history-pin:hover, .history-pin.active { filter: grayscale(0%); }
+.history-delete:hover { color: var(--error); }
 
-/* Дизайнерский разделитель */
 .history-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--border-default), transparent);
@@ -204,26 +174,17 @@
   border: none;
 }
 
-
 @media (max-width: 768px) {
-  /* На мобилках меню полностью скрыто по умолчанию */
   .main-menu {
     width: 0;
     border-right: none;
-    overflow: hidden;
-    transition: width 0.3s ease;
+    transform: translateX(-100%);
   }
 
-  /* Когда меню открыто на мобилке, оно занимает 80% экрана и выезжает поверх */
   .main-menu.open {
     width: 280px;
+    transform: translateX(0);
     box-shadow: 10px 0 50px rgba(0,0,0,0.8);
     z-index: 1000;
-  }
-
-  /* Чтобы скрыть бургер внутри самого меню (так как мы будем юзать кнопку снаружи) */
-  /* Но мы оставим крестик для закрытия */
-  .menu-header-expanded .menu-burger {
-    display: none; 
   }
 }

@@ -1,11 +1,10 @@
 .session-layout {
   display: flex;
   width: 100%;
-  height: 100vh; /* На ПК фиксируем высоту */
+  height: 100vh;
   background: var(--bg-primary);
 }
 
-/* ===== ДЕСКТОПНАЯ ВЕРСИЯ ===== */
 .session-sidebar {
   width: 280px;
   background: var(--bg-secondary);
@@ -14,27 +13,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex-shrink: 0;
-}
-
-.session-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.session-info-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.session-info-value {
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.4;
 }
 
 .session-main {
@@ -45,6 +23,10 @@
   overflow: hidden;
 }
 
+.mobile-only-progress {
+  display: none;
+}
+
 .session-messages {
   flex: 1;
   overflow-y: auto;
@@ -52,19 +34,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.session-input {
-  padding: 20px 32px;
-  border-top: 1px solid var(--border-subtle);
-  background: var(--bg-primary);
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
-}
-
-.session-input .input {
-  flex: 1;
 }
 
 .session-loading {
@@ -98,58 +67,69 @@
   font-size: 14px;
 }
 
-/* Скрываем мобильный прогресс на ПК */
-.mobile-only-progress {
-  display: none;
+.session-input {
+  padding: 20px 32px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
 }
 
-/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+.session-input .input {
+  flex: 1;
+}
+
 @media (max-width: 768px) {
   .session-layout {
-    /* dvh помогает при появлении клавиатуры */
-    height: 100dvh; 
+    height: 100dvh;
     flex-direction: column;
-    padding-top: 60px; /* Отступ для кнопки-бургера */
+    width: 100vw;
+    padding-top: 0;
   }
 
-  /* Прячем левую колонку */
   .session-sidebar {
     display: none;
   }
 
   .session-main {
+    width: 100vw;
     height: 100%;
     border-radius: 0;
+    border: none;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Показываем прогресс-бар наверху */
   .mobile-only-progress {
     display: block;
-    padding: 12px 20px;
+    width: 100%;
+    padding: 60px 20px 12px 20px; 
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-subtle);
+    box-sizing: border-box;
   }
 
   .session-messages {
     padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* Поле ввода прилипает к низу и не перекрывается клавиатурой */
   .session-input {
     padding: 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
     background: var(--bg-secondary);
-    flex-direction: column;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
     gap: 8px;
-    align-items: stretch;
+    box-sizing: border-box;
+    width: 100vw;
   }
-
-  /* Шрифт 16px предотвращает автоматический зум на iOS */
+  
   .session-input .input {
     font-size: 16px;
-  }
-
-  .session-input .btn {
-    width: 100%;
   }
 }

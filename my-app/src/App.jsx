@@ -9,15 +9,15 @@ function App() {
   const [screen, setScreen] = useState('setup')
   const [config, setConfig] = useState(null)
   const [sessionResult, setSessionResult] = useState(null)
-  const [isMenuOpen, setIsMenuOpen] = useState(true)
+  
+  // На мобилках меню изначально закрыто, на ПК - открыто
+  const [isMenuOpen, setIsMenuOpen] = useState(window.innerWidth > 768)
 
-  // Загрузка истории
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('argumentum_history')
     return saved ? JSON.parse(saved) : []
   })
 
-  // Сохранение истории
   useEffect(() => {
     localStorage.setItem('argumentum_history', JSON.stringify(history))
   }, [history])
@@ -25,7 +25,7 @@ function App() {
   const handleStart = (newConfig) => {
     setConfig(newConfig)
     setScreen('session')
-    setIsMenuOpen(false) // Сворачиваем меню при старте
+    setIsMenuOpen(false)
   }
 
   const handleFinish = (result) => {
@@ -41,12 +41,13 @@ function App() {
     setHistory(prev => [newHistoryItem, ...prev])
     setSessionResult(newHistoryItem)
     setScreen('report')
-    setIsMenuOpen(true) // Разворачиваем меню при завершении
+    setIsMenuOpen(true)
   }
 
   const handleOpenHistory = (historyItem) => {
     setSessionResult(historyItem)
     setScreen('report')
+    setIsMenuOpen(false)
   }
 
   const handleDeleteHistory = (id) => {
@@ -64,21 +65,20 @@ function App() {
     setConfig(null)
     setSessionResult(null)
     setScreen('setup')
-    setIsMenuOpen(true)
+    setIsMenuOpen(false)
   }
 
   const isMenuCollapsed = screen === 'session' && !isMenuOpen
 
-  // Разделяем историю на закрепленные и обычные
   const pinnedHistory = history.filter(item => item.isPinned)
   const regularHistory = history.filter(item => !item.isPinned)
 
   return (
     <div className="app-layout">
-      {/* Мобильная кнопка открытия меню */}
       <button className="mobile-global-burger" onClick={() => setIsMenuOpen(true)}>
         ☰
       </button>
+
       <MainMenu 
         isOpen={isMenuOpen} 
         isCollapsed={isMenuCollapsed}
