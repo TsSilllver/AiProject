@@ -23,11 +23,12 @@ function Session({ config, onFinish, onProgressUpdate }) {
     }
   }, [messages])
 
+  // Передаем наверх и счетчик, и историю сообщений
   useEffect(() => {
-    if (onProgressUpdate) onProgressUpdate(userTurns)
-  }, [userTurns, onProgressUpdate])
+    if (onProgressUpdate) onProgressUpdate(userTurns, messages)
+  }, [userTurns, messages, onProgressUpdate])
 
-  // Фикс клавиатуры на iOS
+  // Фикс клавиатуры
   useEffect(() => {
     const handleResize = () => {
       if (window.visualViewport && layoutRef.current) {
@@ -77,10 +78,6 @@ function Session({ config, onFinish, onProgressUpdate }) {
           <div className="session-info-label">Ситуация</div>
           <div className="session-info-value">{config.scenario}</div>
         </div>
-        <div className="session-info">
-          <div className="session-info-label">Роль ИИ</div>
-          <div className="session-info-value">{config.role}</div>
-        </div>
         <ProgressBar current={userTurns} total={config.questionsCount} label="Прогресс" />
         <Button variant="secondary" onClick={handleFinish}>
           Завершить и посмотреть отчёт
@@ -92,26 +89,13 @@ function Session({ config, onFinish, onProgressUpdate }) {
           {messages.map((msg, i) => (
             <Message key={i} role={msg.role} content={msg.content} />
           ))}
-          {loading && (
-            <div className="session-loading">
-              <span /><span /><span />
-            </div>
-          )}
+          {loading && <div className="session-loading"><span /><span /><span /></div>}
           {error && <div className="session-error">Ошибка: {error}</div>}
         </div>
 
         <div className="session-input">
-          <Input
-            multiline
-            rows={2}
-            value={input}
-            onChange={setInput}
-            placeholder="Ваш ответ..."
-            onKeyDown={handleKeyDown}
-          />
-          <Button onClick={handleSend} disabled={!input.trim() || loading}>
-            Отправить
-          </Button>
+          <Input multiline rows={2} value={input} onChange={setInput} placeholder="Ваш ответ..." onKeyDown={handleKeyDown} />
+          <Button onClick={handleSend} disabled={!input.trim() || loading}>Отправить</Button>
         </div>
       </div>
     </div>

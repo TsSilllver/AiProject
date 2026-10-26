@@ -11,9 +11,9 @@ function App() {
   const [sessionResult, setSessionResult] = useState(null)
   
   const [currentTurns, setCurrentTurns] = useState(0)
-  const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth > 768)
+  const [currentMessages, setCurrentMessages] = useState([]) // Храним текущие сообщения для завершения из меню
 
-  // Храним предыдущую ширину, чтобы понять, был ли переход с мобилки на ПК
+  const [isMenuOpen, setIsMenuOpen] = useState(() => window.innerWidth > 768)
   const prevWidthRef = useRef(window.innerWidth)
 
   const [history, setHistory] = useState(() => {
@@ -25,27 +25,17 @@ function App() {
     const handleResize = () => {
       const currentWidth = window.innerWidth
       const prevWidth = prevWidthRef.current
-      
-      // Если мы были на мобилке (< 768) и перешли на ПК (> 768)
-      if (prevWidth <= 768 && currentWidth > 768) {
-        // Открываем меню ТОЛЬКО если мы НЕ в сессии
-        // Если мы в сессии, то меню должно оставаться свернутым (как ты и хотел)
-        if (screen !== 'session') {
-          setIsMenuOpen(true)
-        }
+      if (prevWidth <= 768 && currentWidth > 768 && screen !== 'session') {
+        setIsMenuOpen(true)
       }
-      
-      // Если ушли на мобилку, принудительно закрываем меню
       if (prevWidth > 768 && currentWidth <= 768) {
         setIsMenuOpen(false)
       }
-
       prevWidthRef.current = currentWidth
     }
-
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [screen]) // Добавили зависимость от screen, чтобы эффект видел актуальный экран
+  }, [screen])
 
   useEffect(() => {
     localStorage.setItem('argumentum_history', JSON.stringify(history))
@@ -54,31 +44,34 @@ function App() {
   const handleStart = (newConfig) => {
     setConfig(newConfig)
     setCurrentTurns(0)
+    setCurrentMessages([])
     setScreen('session')
-    
-    // При старте сессии на ПК меню можно свернуть (чтобы было больше места),
-    // на мобилках оно и так скрыто
     setIsMenuOpen(false) 
   }
 
-  const handleFinish = (result) => {
+  // ЕДИНАЯ ФУНКЦИЯ ЗАВЕРШЕНИЯ (вызывается и из чата, и из меню)
+  const processFinish = (turns, messages) => {
+    if (!config) return;
+    
     const newHistoryItem = {
       id: Date.now().toString(),
       date: new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
-      config: result.config,
-      messages: result.messages,
-      turns: result.turns,
+      config: config,
+      messages: messages,
+      turns: turns,
       isPinned: false
     }
     
-    setHistory(prev => [newHistoryItem, ...prev])
+    setHistory(prev => {
+      // Проверка на дубликаты (чтобы не сохранить дважды)
+      const exists = prev.find(item => item.id === newHistoryItem.id)
+      if (exists) return prev
+      return [newHistoryItem, ...prev]
+    })
+    
     setSessionResult(newHistoryItem)
     setScreen('report')
-    
-    // Когда завершаем сессию и переходим к отчету, на ПК можно развернуть меню обратно
-    if (window.innerWidth > 768) {
-      setIsMenuOpen(true)
-    }
+    setIsMenuOpen(false) 
   }
 
   const handleOpenHistory = (historyItem) => {
@@ -102,12 +95,9 @@ function App() {
     setConfig(null)
     setSessionResult(null)
     setCurrentTurns(0)
+    setCurrentMessages([])
     setScreen('setup')
-    
-    // При возврате на главную на ПК открываем меню
-    if (window.innerWidth > 768) {
-      setIsMenuOpen(true)
-    }
+    if (window.innerWidth > 768) setIsMenuOpen(true)
   }
 
   const isSessionActive = screen === 'session' && config
@@ -123,21 +113,13 @@ function App() {
       )}
 
       <div className="mobile-header">
-        <button className="mobile-burger" onClick={() => setIsMenuOpen(true)}>
-          ☰
-        </button>
-        
+        <button className="mobile-burger" onClick={() => setIsMenuOpen(true)}>☰</button>
         {isSessionActive ? (
           <div className="mobile-progress-container">
             <div className="mobile-progress-bar">
-              <div 
-                className="mobile-progress-fill" 
-                style={{ width: `${Math.min((currentTurns / config.questionsCount) * 100, 100)}%` }}
-              />
+              <div className="mobile-progress-fill" style={{ width: `${Math.min((currentTurns / config.questionsCount) * 100, 100)}%` }} />
             </div>
-            <span className="mobile-progress-text">
-              {currentTurns} / {config.questionsCount}
-            </span>
+            <span className="mobile-progress-text">{currentTurns} / {config.questionsCount}</span>
           </div>
         ) : (
           <div className="mobile-brand" onClick={handleReset}>
@@ -158,18 +140,25 @@ function App() {
         onPinHistory={handlePinHistory}
         onNewSession={handleReset}
         isSessionActive={isSessionActive}
-        onFinishSession={handleReset}
+        // ВАЖНО: Передаем функцию завершения с актуальными данными
+        onFinishSession={() => processFinish(currentTurns, currentMessages)}
       />
       
       <div className={`app-content ${isMenuCollapsed ? 'menu-collapsed' : ''}`}>
         {screen === 'setup' && <Setup onStart={handleStart} />}
         
+        {screen === 'active' /* заглушка, используется 'session' */} 
         {screen === 'session' && config && (
           <Session 
-            key={config.scenario} // Добавили key, чтобы сессия пересоздавалась с нуля
+            key={config.scenario}
             config={config} 
-            onFinish={handleFinish} 
-            onProgressUpdate={(turns) => setCurrentTurns(turns)}
+            // Обычное завершение из чата
+            onFinish={(result) => processFinish(result.turns, result.messages)} 
+            // Обновляем счетчик и сообщения для меню
+            onProgressUpdate={(turns, msgs) => {
+              setCurrentTurns(turns);
+              if (msgs) setCurrentMessages(msgs);
+            }}
           />
         )}
         
