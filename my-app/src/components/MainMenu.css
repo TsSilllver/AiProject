@@ -108,7 +108,9 @@
   white-space: nowrap;
 }
 
-.menu-btn-primary:hover { background: var(--border-default); }
+.menu-btn-primary:hover { 
+  background: var(--border-default); 
+}
 
 .menu-history-title {
   font-size: 12px;
@@ -118,7 +120,10 @@
   letter-spacing: 0.05em;
 }
 
-.menu-empty { font-size: 13px; color: var(--text-disabled); }
+.menu-empty { 
+  font-size: 13px; 
+  color: var(--text-disabled); 
+}
 
 .menu-history-item {
   display: flex;
@@ -128,10 +133,21 @@
   border-radius: var(--radius-md);
   transition: 0.2s;
 }
-.menu-history-item:hover { background: var(--bg-tertiary); }
-.menu-history-item.pinned { background: rgba(99, 102, 241, 0.05); }
 
-.history-info { flex: 1; cursor: pointer; overflow: hidden; }
+.menu-history-item:hover { 
+  background: var(--bg-tertiary); 
+}
+
+.menu-history-item.pinned {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.history-info { 
+  flex: 1; 
+  cursor: pointer; 
+  overflow: hidden; 
+}
+
 .history-scenario {
   font-size: 14px;
   color: var(--text-primary);
@@ -140,7 +156,11 @@
   text-overflow: ellipsis;
   margin-bottom: 4px;
 }
-.history-date { font-size: 12px; color: var(--text-tertiary); }
+
+.history-date { 
+  font-size: 12px; 
+  color: var(--text-tertiary); 
+}
 
 .history-actions {
   display: flex;
@@ -150,8 +170,10 @@
   transition: 0.2s;
 }
 
-.menu-history-item:hover .history-actions { opacity: 1; }
-.menu-history-item.pinned .history-actions { opacity: 1; }
+.menu-history-item:hover .history-actions,
+.menu-history-item.pinned .history-actions {
+  opacity: 1;
+}
 
 .history-pin, .history-delete {
   background: none;
@@ -159,13 +181,21 @@
   color: var(--text-tertiary);
   cursor: pointer;
   padding: 4px;
-  font-size: 12px;
   transition: 0.2s;
 }
 
-.history-pin { filter: grayscale(100%); }
-.history-pin:hover, .history-pin.active { filter: grayscale(0%); }
-.history-delete:hover { color: var(--error); }
+.history-pin {
+  font-size: 12px;
+  filter: grayscale(100%);
+}
+
+.history-pin.active {
+  filter: grayscale(0%);
+}
+
+.history-delete:hover { 
+  color: var(--error); 
+}
 
 .history-divider {
   height: 1px;
@@ -179,6 +209,7 @@
     width: 0;
     border-right: none;
     transform: translateX(-100%);
+    transition: transform 0.3s ease, width 0.3s ease;
   }
 
   .main-menu.open {

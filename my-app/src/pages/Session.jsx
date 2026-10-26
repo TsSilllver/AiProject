@@ -51,24 +51,18 @@ function Session({ config, onFinish }) {
           <div className="session-info-label">Ситуация</div>
           <div className="session-info-value">{config.scenario}</div>
         </div>
-
         <div className="session-info">
           <div className="session-info-label">Роль ИИ</div>
           <div className="session-info-value">{config.role}</div>
         </div>
-
-        <ProgressBar
-          current={userTurns}
-          total={config.questionsCount}
-          label="Прогресс"
-        />
-
+        <ProgressBar current={userTurns} total={config.questionsCount} label="Прогресс" />
         <Button variant="secondary" onClick={handleFinish}>
           Завершить и посмотреть отчёт
         </Button>
       </div>
 
       <div className="session-main">
+        {/* Мобильный прогресс-бар под хедером */}
         <div className="mobile-only-progress">
            <ProgressBar current={userTurns} total={config.questionsCount} label="Вопросы" />
         </div>

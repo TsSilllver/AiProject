@@ -10,8 +10,10 @@ function App() {
   const [config, setConfig] = useState(null)
   const [sessionResult, setSessionResult] = useState(null)
   
-  // На мобилках меню изначально закрыто, на ПК - открыто
-  const [isMenuOpen, setIsMenuOpen] = useState(window.innerWidth > 768)
+  // Инициализируем меню: на ПК открыто, на мобилках закрыто
+  const [isMenuOpen, setIsMenuOpen] = useState(() => {
+    return window.innerWidth > 768
+  })
 
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('argumentum_history')
@@ -41,13 +43,12 @@ function App() {
     setHistory(prev => [newHistoryItem, ...prev])
     setSessionResult(newHistoryItem)
     setScreen('report')
-    setIsMenuOpen(true)
+    setIsMenuOpen(window.innerWidth > 768)
   }
 
   const handleOpenHistory = (historyItem) => {
     setSessionResult(historyItem)
     setScreen('report')
-    setIsMenuOpen(false)
   }
 
   const handleDeleteHistory = (id) => {
@@ -65,7 +66,7 @@ function App() {
     setConfig(null)
     setSessionResult(null)
     setScreen('setup')
-    setIsMenuOpen(false)
+    setIsMenuOpen(window.innerWidth > 768)
   }
 
   const isMenuCollapsed = screen === 'session' && !isMenuOpen
@@ -75,9 +76,16 @@ function App() {
 
   return (
     <div className="app-layout">
-      <button className="mobile-global-burger" onClick={() => setIsMenuOpen(true)}>
-        ☰
-      </button>
+      {/* Мобильный хедер (виден только на узких экранах) */}
+      <div className="mobile-header">
+        <button className="mobile-burger" onClick={() => setIsMenuOpen(true)}>
+          ☰
+        </button>
+        <div className="mobile-brand" onClick={handleReset}>
+          <div className="mobile-logo">A</div>
+          <span>Argumentum</span>
+        </div>
+      </div>
 
       <MainMenu 
         isOpen={isMenuOpen} 
