@@ -75,6 +75,10 @@ function App() {
 
   return (
     <div className="app-layout">
+      {/* Мобильная кнопка открытия меню */}
+      <button className="mobile-global-burger" onClick={() => setIsMenuOpen(true)}>
+        ☰
+      </button>
       <MainMenu 
         isOpen={isMenuOpen} 
         isCollapsed={isMenuCollapsed}

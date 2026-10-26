@@ -40,13 +40,13 @@ function Session({ config, onFinish }) {
     }
   }
 
-  // Теперь мы просто передаем историю и ждем, пока пользователь сам нажмет кнопку
   const handleFinish = () => {
     onFinish({ config, messages, turns: userTurns })
   }
 
   return (
     <div className="session-layout">
+      {/* Левая панель сессии (видна только на ПК) */}
       <div className="session-sidebar">
         <div className="session-info">
           <div className="session-info-label">Ситуация</div>
@@ -69,7 +69,17 @@ function Session({ config, onFinish }) {
         </Button>
       </div>
 
+      {/* Правая часть с чатом */}
       <div className="session-main">
+        {/* Мобильный прогресс-бар (виден только на мобилках) */}
+        <div className="mobile-only-progress">
+          <ProgressBar
+            current={userTurns}
+            total={config.questionsCount}
+            label="Вопросы"
+          />
+        </div>
+
         <div className="session-messages" ref={scrollRef}>
           {messages.map((msg, i) => (
             <Message key={i} role={msg.role} content={msg.content} />

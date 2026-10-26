@@ -103,7 +103,6 @@
   gap: 24px;
 }
 
-/* ... (остальные стили кнопок и истории остаются прежними, как в прошлом ответе) ... */
 .menu-btn-primary {
   width: 100%;
   padding: 12px;
@@ -203,4 +202,28 @@
   background: linear-gradient(90deg, transparent, var(--border-default), transparent);
   margin: 16px 0;
   border: none;
+}
+
+
+@media (max-width: 768px) {
+  /* На мобилках меню полностью скрыто по умолчанию */
+  .main-menu {
+    width: 0;
+    border-right: none;
+    overflow: hidden;
+    transition: width 0.3s ease;
+  }
+
+  /* Когда меню открыто на мобилке, оно занимает 80% экрана и выезжает поверх */
+  .main-menu.open {
+    width: 280px;
+    box-shadow: 10px 0 50px rgba(0,0,0,0.8);
+    z-index: 1000;
+  }
+
+  /* Чтобы скрыть бургер внутри самого меню (так как мы будем юзать кнопку снаружи) */
+  /* Но мы оставим крестик для закрытия */
+  .menu-header-expanded .menu-burger {
+    display: none; 
+  }
 }

@@ -1,10 +1,11 @@
 .session-layout {
   display: flex;
   width: 100%;
-  height: 100vh; /* Занимаем весь экран */
+  height: 100vh; /* На ПК фиксируем высоту */
   background: var(--bg-primary);
 }
 
+/* ===== ДЕСКТОПНАЯ ВЕРСИЯ ===== */
 .session-sidebar {
   width: 280px;
   background: var(--bg-secondary);
@@ -13,14 +14,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.session-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-primary);
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .session-info {
@@ -43,6 +37,14 @@
   line-height: 1.4;
 }
 
+.session-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
 .session-messages {
   flex: 1;
   overflow-y: auto;
@@ -50,6 +52,19 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.session-input {
+  padding: 20px 32px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.session-input .input {
+  flex: 1;
 }
 
 .session-loading {
@@ -66,21 +81,12 @@
   animation: sessionPulse 1.4s infinite;
 }
 
-.session-loading span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.session-loading span:nth-child(3) {
-  animation-delay: 0.4s;
-}
+.session-loading span:nth-child(2) { animation-delay: 0.2s; }
+.session-loading span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes sessionPulse {
-  0%, 60%, 100% {
-    opacity: 0.3;
-  }
-  30% {
-    opacity: 1;
-  }
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
 }
 
 .session-error {
@@ -92,27 +98,58 @@
   font-size: 14px;
 }
 
-.session-input {
-  padding: 20px 32px;
-  border-top: 1px solid var(--border-subtle);
-  background: var(--bg-primary);
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
+/* Скрываем мобильный прогресс на ПК */
+.mobile-only-progress {
+  display: none;
 }
 
-.session-input .input {
-  flex: 1;
-}
-
-@media (max-width: 900px) {
+/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+@media (max-width: 768px) {
   .session-layout {
+    /* dvh помогает при появлении клавиатуры */
+    height: 100dvh; 
     flex-direction: column;
+    padding-top: 60px; /* Отступ для кнопки-бургера */
   }
+
+  /* Прячем левую колонку */
   .session-sidebar {
-    width: 100%;
-    height: auto;
-    border-right: none;
+    display: none;
+  }
+
+  .session-main {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  /* Показываем прогресс-бар наверху */
+  .mobile-only-progress {
+    display: block;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .session-messages {
+    padding: 16px;
+  }
+
+  /* Поле ввода прилипает к низу и не перекрывается клавиатурой */
+  .session-input {
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: var(--bg-secondary);
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  /* Шрифт 16px предотвращает автоматический зум на iOS */
+  .session-input .input {
+    font-size: 16px;
+  }
+
+  .session-input .btn {
+    width: 100%;
   }
 }
