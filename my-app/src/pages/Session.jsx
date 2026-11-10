@@ -23,7 +23,6 @@ function Session({ config, onFinish, onProgressUpdate }) {
     }
   }, [messages])
 
-  // Передаем наверх и счетчик, и историю сообщений
   useEffect(() => {
     if (onProgressUpdate) onProgressUpdate(userTurns, messages)
   }, [userTurns, messages, onProgressUpdate])

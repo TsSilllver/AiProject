@@ -80,7 +80,7 @@
   .session-layout {
     flex-direction: column;
     width: 100vw;
-    padding-top: 60px; /* Место под объединенный хедер */
+    padding-top: 60px; 
     box-sizing: border-box;
   }
 

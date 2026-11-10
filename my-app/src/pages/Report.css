@@ -6,7 +6,6 @@
   gap: 32px;
   margin: 40px auto;
   position: relative;
-  /* Убрали z-index и жесткий фон, чтобы не перекрывать хедер */
   background: transparent; 
   padding: 0 20px;
   box-sizing: border-box;
@@ -116,13 +115,11 @@
   margin-bottom: 40px;
 }
 
-/* МОБИЛЬНАЯ ВЕРСИЯ */
 @media (max-width: 768px) {
   .report-container {
     margin-top: 20px;
     padding: 0 16px;
     width: 100%;
-    /* Убрали min-height и z-index, чтобы отчет был просто контентом */
   }
 
   .report-header h1 {

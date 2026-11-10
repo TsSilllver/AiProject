@@ -1,5 +1,4 @@
 <?php
-// api.php — прокси для GigaChat
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -14,15 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// ⚠️ Authorization Key из Студии Сбера
 $authKey = getenv('GIGACHAT_AUTH_KEY');
-if (!$authKey) {
-    $authKey = 'MDFhMTQwNWQtY2NkMi03OTQ2LTlkYTctMzNhNDE5ZWQxNmFiOmUwZDQxZjhlLWQyM2EtNDM5Ny05ODFhLWQwMjVkYjc2OWRjMQ=='; 
-}
 
-// ===== Шаг 1: Получаем Access Token =====
 
-// Генерируем UUID v4 правильно
+
 function generateUuid() {
     return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
         mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -43,9 +37,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'RqUID: ' . generateUuid(),
     'Authorization: Basic ' . $authKey,
 ]);
-
-// НЕ отключаем SSL — используем сертификат из php.ini
-// (если локально не работает, можно временно вернуть false)
 
 $tokenResponse = curl_exec($ch);
 
@@ -70,7 +61,6 @@ if (!$accessToken) {
     exit;
 }
 
-// ===== Шаг 2: Отправляем запрос в GigaChat =====
 
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);
@@ -81,7 +71,7 @@ if (!$data || !isset($data['messages'])) {
     exit;
 }
 
-// Указываем модель
+
 $data['model'] = 'GigaChat-3-Ultra';
 
 $ch2 = curl_init('https://api.giga.chat/v1/chat/completions');

@@ -1,5 +1,4 @@
 :root {
-  /* Цвета — нейтральная шкала */
   --bg-primary: #0a0a0b;
   --bg-secondary: #111113;
   --bg-tertiary: #18181b;
@@ -14,17 +13,14 @@
   --text-tertiary: #71717a;
   --text-disabled: #52525b;
 
-  /* Акцент — глубокий индиго */
   --accent: #6366f1;
   --accent-hover: #818cf8;
   --accent-muted: rgba(99, 102, 241, 0.12);
 
-  /* Семантика */
   --success: #22c55e;
   --warning: #f59e0b;
   --error: #ef4444;
 
-  /* Размеры */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -33,7 +29,6 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-  /* Типографика */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
 }
@@ -76,7 +71,6 @@ textarea {
   color: var(--text-primary);
 }
 
-/* Скроллбар */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

@@ -14,11 +14,9 @@ function MainMenu({
   isSessionActive,
   onFinishSession
 }) {
-  // Локальный стейт для страховки на мобилках
   const [localHistory, setLocalHistory] = useState([])
 
   useEffect(() => {
-    // Если меню открывается, подстраховываемся и читаем из localStorage
     if (isOpen) {
       const saved = localStorage.getItem('argumentum_history')
       if (saved) {
